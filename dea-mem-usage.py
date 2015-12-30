@@ -11,7 +11,7 @@ class Node:
         def __repr__(self):
                 return '{} {}'.format(self.ip, self.role) 
 
-        def isDea(self):
+        def isdea(self):
                 return "dea" == self.role
 
 class DockerInstance:
@@ -40,7 +40,7 @@ class DockerInstance:
 kato_nodes = subprocess.check_output(["kato", "node", "list"])
 #print(kato_nodes)
 for node in map(Node, kato_nodes.splitlines()):
-        if (node.isDea()):
+        if node.isdea():
                 print("Node:" + str(node))
                 docker_instances = subprocess.check_output(["ssh", node.ip, "docker ps"])
                 for instance in map(DockerInstance, docker_instances.splitlines()[1:]):
