@@ -32,18 +32,26 @@ class DockerInstance:
         else:
             raise ValueError("Unable to parse Container name from\n{}".format(ps_string))
 
-    def get_overhead(self):
-        free_mem = self.mem_limit - self.mem_usage
-        overhead = free_mem / self.mem_limit
+    def __free_mem(self):
+        return self.mem_limit - self.mem_usage
+
+    def __mem_limit_mb(self):
+        return round(self.mem_limit / 1024**2, 1)
+
+    def __free_mem_mb(self):
+        return round(self.__free_mem() / 1024**2, 1)
+
+    def __free_mem_percentage(self):
+        overhead = self.__free_mem() / self.mem_limit
         return round(overhead * 100, 1)
 
     def __repr__(self):
-        return "Container id: '{}', name: '{}'".format(self.id, self.name)
+        return "{}\t{}\t{}MB\t{}MB\t{}%".format(self.id, self.name, self.__mem_limit_mb(), self.__free_mem_mb(), self.__free_mem_percentage())
 
 
 # if __name__ == "__main__":
 kato_nodes = subprocess.check_output(["kato", "node", "list"])
-print("Node\tContainer Id\tContainer name\tFree mem")
+print("Node\tContainer Id\tContainer name\tMem limit\tFree mem\tFree mem %")
 for node in map(Node, kato_nodes.splitlines()):
     if node.is_dea():
         docker_instances = subprocess.check_output(["ssh", node.ip, "docker ps"])
@@ -52,6 +60,4 @@ for node in map(Node, kato_nodes.splitlines()):
                 ["ssh", node.ip, "cat /sys/fs/cgroup/memory/docker/{}*/memory.usage_in_bytes".format(instance.id)]))
             instance.mem_limit = float(subprocess.check_output(
                 ["ssh", node.ip, "cat /sys/fs/cgroup/memory/docker/{}*/memory.limit_in_bytes".format(instance.id)]))
-            print("{}\t{}\t{}\t{}%".format(
-                node.ip, instance.id, instance.name, instance.get_overhead())
-            )
+            print("{}\t{}".format(node.ip, instance))
