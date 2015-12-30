@@ -21,14 +21,14 @@ class DockerInstance:
         # The beginning of the line is the alphanumeric Container Id
         id_search = re.search("^\w+", ps_string, re.UNICODE)
         if id_search:
-            self.id = id_search.group()
+            self.id = id_search.group().strip()
         else:
             raise ValueError("Unable to parse Container Id from\n{}".format(ps_string))
 
         # The end of the line is the Container name
         name_search = re.search("([\w-])+\s*$", ps_string, re.UNICODE)
         if name_search:
-            self.name = name_search.group()
+            self.name = name_search.group().strip()
         else:
             raise ValueError("Unable to parse Container name from\n{}".format(ps_string))
 
