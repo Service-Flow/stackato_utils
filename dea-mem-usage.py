@@ -37,8 +37,7 @@ class DockerInstance:
                 return self.id
 
         def __repr__(self):
-                return 'Container id: {}, name: {}'.format(self.id, self.name)
-                #return 'Container: id %s' % (self.id)
+                return "Container id: '{}', name: '{}'".format(self.id, self.name)
 
 #if __name__ == "__main__":
 kato_nodes = subprocess.check_output(["kato", "node", "list"])
