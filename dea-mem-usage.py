@@ -9,11 +9,11 @@ class Node:
         self.ip = node_info[0]
         self.role = node_info[2]
 
-    def __repr__(self):
-        return '{} {}'.format(self.ip, self.role)
-
     def is_dea(self):
         return "dea" == self.role
+
+    def __repr__(self):
+        return '{} {}'.format(self.ip, self.role)
 
 
 class DockerInstance:
