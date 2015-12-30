@@ -14,9 +14,6 @@ class Node:
         def isDea(self):
                 return "dea" == self.role
 
-        def getIp(self):
-                return self.ip
-
 class DockerInstance:
         def __init__(self, ps_string):
                 # The beginning of the line is the alphanumeric Container Id
@@ -45,7 +42,7 @@ kato_nodes = subprocess.check_output(["kato", "node", "list"])
 for node in map(Node, kato_nodes.splitlines()):
         if (node.isDea()):
                 print("Node:" + str(node))
-                docker_instances = subprocess.check_output(["ssh", node.getIp(), "docker ps"])
+                docker_instances = subprocess.check_output(["ssh", node.ip, "docker ps"])
                 for instance in map(DockerInstance, docker_instances.splitlines()[1:]):
                         print(instance)
                         #print(subprocess.check_output(["ssh", node.getIp(), "docker inspect", instance.getId()]))
