@@ -43,17 +43,15 @@ class DockerInstance:
 
 # if __name__ == "__main__":
 kato_nodes = subprocess.check_output(["kato", "node", "list"])
-# print(kato_nodes)
+print("Node\tContainer Id\tContainer name\tFree mem")
 for node in map(Node, kato_nodes.splitlines()):
     if node.is_dea():
-        print("Node:" + str(node))
         docker_instances = subprocess.check_output(["ssh", node.ip, "docker ps"])
         for instance in map(DockerInstance, docker_instances.splitlines()[1:]):
             instance.mem_usage = float(subprocess.check_output(
                 ["ssh", node.ip, "cat /sys/fs/cgroup/memory/docker/{}*/memory.usage_in_bytes".format(instance.id)]))
             instance.mem_limit = float(subprocess.check_output(
                 ["ssh", node.ip, "cat /sys/fs/cgroup/memory/docker/{}*/memory.limit_in_bytes".format(instance.id)]))
-            print("{} free memory {}%".format(instance, instance.get_overhead()))
-            import sys
-
-            sys.exit()
+            print("{}\t{}\t{}\t{}%".format(
+                node.ip, instance.id, instance.name, instance.get_overhead())
+            )
