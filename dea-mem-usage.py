@@ -46,12 +46,13 @@ class DockerInstance:
         return round(overhead * 100, 1)
 
     def __repr__(self):
-        return "{}\t{}\t{}MB\t{}MB\t{}%".format(self.id, self.name, self.__mem_limit_mb(), self.__free_mem_mb(), self.__free_mem_percentage())
+        return "{}\t{}\t{}\t{}\t{}"\
+            .format(self.id, self.name, self.__mem_limit_mb(), self.__free_mem_mb(), self.__free_mem_percentage())
 
 
 # if __name__ == "__main__":
 kato_nodes = subprocess.check_output(["kato", "node", "list"])
-print("Node\tContainer Id\tContainer name\tMem limit\tFree mem\tFree mem %")
+print("Node\tContainer Id\tContainer name\tMem limit MB\tFree mem MB\tFree mem %")
 for node in map(Node, kato_nodes.splitlines()):
     if node.is_dea():
         docker_instances = subprocess.check_output(["ssh", node.ip, "docker ps"])
